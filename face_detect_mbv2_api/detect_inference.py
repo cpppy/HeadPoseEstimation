@@ -1,4 +1,3 @@
-import onnx
 import onnxruntime
 import cv2
 import numpy as np
@@ -36,8 +35,10 @@ class FaceDetAPI(object):
         img = np.float32(img_cv2)
 
         # testing scale
-        target_size = 840
-        max_size = 1280
+        # target_size = 840
+        # max_size = 1280
+        target_size = 240
+        max_size = 480
         im_shape = img.shape
         im_size_min = np.min(im_shape[0:2])
         im_size_max = np.max(im_shape[0:2])

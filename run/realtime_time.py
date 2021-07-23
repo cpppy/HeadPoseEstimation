@@ -1,14 +1,12 @@
 import cv2
-
+from face_detect_mbv2_api.detect_inference import FaceDetAPI
+from deploy.head_pose_est_api import HeadPoseEstAPI
+from utils import visual
 
 def realtime_test():
-    # face_detect_api = FaceDetectAPI(img_size=(480, 640),
-    #                                 device_type='cpu',
-    #                                 draw_save_dir='/data/FaceDetect/results')
 
-    # img_cv2 = cv2.imread('/data/FaceDetect/7.png')
-    # img_cv2 = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2RGB)
-    # face_detect_api.detect(img_cv2=img_cv2, draw_result=True)
+    face_det_api = FaceDetAPI()
+    hpe_api = HeadPoseEstAPI()
 
     ######################## load camera ######################
     clicked = False
@@ -19,22 +17,38 @@ def realtime_test():
             clicked = True
 
     cameraCapture = cv2.VideoCapture(0)
-    # cameraCapture.set(3, 720)
-    # cameraCapture.set(4, 1280)
-    cameraCapture.set(cv2.CAP_PROP_FPS, 60)
-    cv2.namedWindow('MyWindow')
-    cv2.setMouseCallback('MyWindow', onMouse)
+    cameraCapture.set(3, 720)
+    cameraCapture.set(4, 1280)
+    cameraCapture.set(cv2.CAP_PROP_FPS, 5)
+    cv2.namedWindow('HeadPoseTest')
+    cv2.setMouseCallback('HeadPoseTest', onMouse)
     print('Shiwing camera feed, Click window or press any key to stop')
     success, frame = cameraCapture.read()
     while success and cv2.waitKey(1) == -1 and not clicked:
-        cv2.imshow('MyWindow', frame)
+
         success, frame = cameraCapture.read()
         # print(frame.shape)
         # frame = rotate90(frame)
-        img_cv2 = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # frame = face_detect_api.detect(img_cv2=img_cv2, score_thresh=0.4,  draw_result=True)
-        # print(frame.shape)
+        # img_cv2 = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        img_cv2 = frame
+        img_cv2 = cv2.flip(img_cv2, flipCode=1)
+        face_bbox = face_det_api(img_cv2=img_cv2)
+        if len(face_bbox) == 4:
+            # draw face bbox
+            b = list(map(int, face_bbox))
+            cv2.rectangle(img_cv2, (b[0], b[1]), (b[2], b[3]), (0, 0, 255), thickness=1)
+
+            # head pose est
+            x0, y0, x1, y1 = face_bbox[:]
+            face_img = img_cv2[y0:y1, x0:x1]
+            yaw, pitch, roll = hpe_api(face_img)[:]
+            cx, cy = int((x0+x1)/2), int((y0+y1)/2)
+            visual.draw_axis(img_cv2, yaw, pitch, roll, tdx=cx, tdy=cy)
+
         frame = img_cv2
+
+        # print(frame.shape)
+        cv2.imshow('HeadPoseTest', frame)
 
     cv2.destroyAllWindows()
     cameraCapture.release()

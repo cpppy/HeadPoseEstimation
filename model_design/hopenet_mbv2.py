@@ -25,6 +25,11 @@ class HopenetMBV2(nn.Module):
         pre_yaw = self.fc_yaw(x)
         pre_pitch = self.fc_pitch(x)
         pre_roll = self.fc_roll(x)
+
+        if not self.training:
+            output = torch.cat((pre_yaw, pre_pitch, pre_roll), dim=0)
+            output = F.softmax(output, dim=1)
+            return output
         return pre_yaw, pre_pitch, pre_roll
 
 
@@ -32,10 +37,12 @@ class HopenetMBV2(nn.Module):
 if __name__=='__main__':
 
     model = HopenetMBV2(66)
-    model.train()
+    model.eval()
 
     x = torch.randn(2, 3, 224, 224, dtype=torch.float32)
-    yaw, pitch, roll = model(x)
-    print(yaw.shape, pitch.shape, roll.shape)
+    # yaw, pitch, roll = model(x)
+    # print(yaw.shape, pitch.shape, roll.shape)
+    y = model(x)
+    print(y.shape)
 
 
