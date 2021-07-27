@@ -13,7 +13,7 @@ class HopenetMBV2(nn.Module):
         self.inplanes = 64
         super(HopenetMBV2, self).__init__()
         self.backbone = MobileNetV2()
-        self.avgpool = nn.AvgPool2d(7)
+        self.avgpool = nn.AvgPool2d(4)
         self.fc_yaw = nn.Linear(320, num_bins)
         self.fc_pitch = nn.Linear(320, num_bins)
         self.fc_roll = nn.Linear(320, num_bins)
@@ -39,7 +39,7 @@ if __name__=='__main__':
     model = HopenetMBV2(66)
     model.eval()
 
-    x = torch.randn(2, 3, 224, 224, dtype=torch.float32)
+    x = torch.randn(2, 3, 112, 112, dtype=torch.float32)
     # yaw, pitch, roll = model(x)
     # print(yaw.shape, pitch.shape, roll.shape)
     y = model(x)
