@@ -172,17 +172,31 @@ class SSRNet(nn.Module):
         delta_k_1 = self.delta_k1((self.s1_pre1(t1) * self.s2_pre1(t4)).view(-1, 32))
         delta_k_2 = self.delta_k2((self.s1_pre2(t2) * self.s2_pre2(t5)).view(-1, 32))
         delta_k_3 = self.delta_k3((self.s1_pre3(t3) * self.s2_pre3(t6)).view(-1, 32))
+        print('delta:', delta_k_1.shape, delta_k_2.shape, delta_k_3.shape)
         # print(self.s1_pre1(t1).shape)
         # print(self.s1_dr1(self.s1_pre1(t1).view(-1,32)).shape)
         vec_p_1 = self.vec_p1(self.s1_dr1(self.s1_pre1(t1).view(-1, 32)) * self.s2_dr1(self.s2_pre1(t4).view(-1, 32)))
         # print(vec_p_1.shape)
         vec_p_2 = self.vec_p2(self.s1_dr2(self.s1_pre2(t2).view(-1, 32)) * self.s2_dr2(self.s2_pre2(t5).view(-1, 32)))
         vec_p_3 = self.vec_p3(self.s1_dr3(self.s1_pre3(t3).view(-1, 32)) * self.s2_dr3(self.s2_pre3(t6).view(-1, 32)))
+        print('vec:', vec_p_1.shape, vec_p_2.shape, vec_p_3.shape)
 
         eta1 = self.eta1(self.s1_dr1(self.s1_pre1(t1).view(-1, 32)) * self.s2_dr1(self.s2_pre1(t4).view(-1, 32)))
         eta2 = self.eta2(self.s1_dr2(self.s1_pre2(t2).view(-1, 32)) * self.s2_dr2(self.s2_pre2(t5).view(-1, 32)))
         eta3 = self.eta3(self.s1_dr3(self.s1_pre3(t3).view(-1, 32)) * self.s2_dr3(self.s2_pre3(t6).view(-1, 32)))
+        print('eta:', eta1.shape, eta2.shape, eta3.shape)
+
         # 可以理解为 30 + 5 + 0.5 = 35.5 这么去从粗到细预测
+        '''
+        delta: [N, 1]
+        vec: [N, 3]
+        eta: [N, 3]
+        
+        sum{ ((1, 2, 3) + eta) * vec_p  /  ( (101/3) * (1+delta_k) }
+        
+        '''
+
+
         output1 = torch.sum((self.idx1.view(1, 3) + eta1) * vec_p_1 / 3 / (1 + delta_k_1), dim=1)
 
         output2 = torch.sum((self.idx2.view(1, 3) + eta2) * vec_p_2 / 3 / (1 + delta_k_1) / 3 / (1 + delta_k_2), dim=1)
@@ -197,6 +211,6 @@ if __name__ == "__main__":
     from torchsummary import summary
 
     model = SSRNet()
-    summary(model, (3, 64, 64), device="cpu")
+    # summary(model, (3, 64, 64), device="cpu")
     x = torch.randn(2, 3, 64, 64)
     print(model(x))
