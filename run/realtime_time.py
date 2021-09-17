@@ -22,7 +22,7 @@ def realtime_test():
     cameraCapture.set(cv2.CAP_PROP_FPS, 5)
     cv2.namedWindow('HeadPoseTest')
     cv2.setMouseCallback('HeadPoseTest', onMouse)
-    print('Shiwing camera feed, Click window or press any key to stop')
+    print('camera feed, Click window or press any key to stop')
     success, frame = cameraCapture.read()
     while success and cv2.waitKey(1) == -1 and not clicked:
 
