@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from model_design.mobilenetv2 import MobileNetV2
 
 
-
 class HopenetMBV2(nn.Module):
     # Hopenet with 3 output layers for yaw, pitch and roll
     # Predicts Euler angles by binning and regression with the expected value
@@ -22,16 +21,16 @@ class HopenetMBV2(nn.Module):
         x = self.backbone(x)[-1]
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
+        x = F.dropout(x, p=0.2, training=self.training)
         pre_yaw = self.fc_yaw(x)
         pre_pitch = self.fc_pitch(x)
         pre_roll = self.fc_roll(x)
 
         if not self.training:
-            output = torch.cat((pre_yaw, pre_pitch, pre_roll), dim=0)
-            output = F.softmax(output, dim=1)
+            output = torch.cat((pre_yaw[:, None, :], pre_pitch[:, None, :], pre_roll[:, None, :]), dim=1)
+            output = F.softmax(output, dim=-1)
             return output
         return pre_yaw, pre_pitch, pre_roll
-
 
 
 if __name__=='__main__':

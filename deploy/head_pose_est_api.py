@@ -12,11 +12,12 @@ class HeadPoseEstAPI(object):
         self.model = self._load_model(model_path)
 
     def _load_model(self, model_path):
-        opts = onnxruntime.SessionOptions()
-        opts.intra_op_num_threads = 2
-        opts.inter_op_num_threads = 2
-        opts.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
-        model = onnxruntime.InferenceSession(model_path, sess_options=opts)
+        # opts = onnxruntime.SessionOptions()
+        # opts.intra_op_num_threads = 2
+        # opts.inter_op_num_threads = 2
+        # opts.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
+        # model = onnxruntime.InferenceSession(model_path, sess_options=opts)
+        model = onnxruntime.InferenceSession(model_path, None, providers=["CUDAExecutionProvider"])
         return model
 
     def _img_preprocess(self, img_cv2):
@@ -34,7 +35,7 @@ class HeadPoseEstAPI(object):
 
     def __call__(self, img_cv2):
         img_t = self._img_preprocess(img_cv2)
-        output = self.model.run(None, {'input': img_t})[0]
+        output = self.model.run(None, {'input': img_t})[0][0]
         # print('output: ', output.shape)
 
         # decode
@@ -49,7 +50,7 @@ def onnx_inference():
 
     hpe_api = HeadPoseEstAPI()
 
-    img_cv2 = cv2.imread('../datasets/test.jpg', cv2.IMREAD_COLOR)
+    img_cv2 = cv2.imread('../dataset/test.jpg', cv2.IMREAD_COLOR)
     print('org_img:', img_cv2.shape)
     yaw, pitch, roll = hpe_api(img_cv2)[:]
 

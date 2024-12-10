@@ -15,6 +15,7 @@ def load_model():
     model = HopenetMBV2(num_bins=60)
     save_dir = '/data/output/head_pose_estimate_hopenet_mbv2_biwi_v3'
 
+
     checkpoint_op = CheckpointMgr(ckpt_dir=save_dir)
     checkpoint_op.load_checkpoint(model,
                                   warm_load=False,
@@ -49,13 +50,12 @@ def output_to_onnx(model, model_onnx_path):
 def main():
     model = load_model()
     output_to_onnx(model=model,
-                   model_onnx_path='head_pose_estimation_hopenet_biwi_mbv2_v3.onnx',
+                   model_onnx_path='head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx',
                    )
 
     '''
     python3 -m onnxsim retinaface_mb_s1024_downfpn.onnx retinaface_mb_s1024_downfpn_sim.onnx 
-    scp retinaface_mb_s1024_downfpn_sim.onnx ubuntu@10.42.20.153:/data/workspace/opensources/tengine/Tengine-Convert-Tools/build/install/bin/
-
+    
     convert_model_to_tm -f onnx -m ./models/retinaface_mb_s1024_downfpn_sim.onnx -o ./models/retinaface_mb_s1024_downfpn_sim.tmfile
 
     '''

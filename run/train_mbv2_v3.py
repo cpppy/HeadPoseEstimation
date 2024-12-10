@@ -14,11 +14,9 @@ import torch.backends.cudnn as cudnn
 from checkpoint_mgr.checkpoint_mgr import CheckpointMgr
 from checkpoint_mgr.metrics import AverageMeter
 
-os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1, 2, 3'
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 n_cuda_device = torch.cuda.device_count()
 print('n_cuda_device: ', n_cuda_device)
-
-
 
 '''
 + data_aug from face_recog
@@ -27,15 +25,14 @@ print('n_cuda_device: ', n_cuda_device)
 + input_size from 224 to 112
 '''
 
-
 if __name__ == '__main__':
 
     cudnn.enabled = True
 
-
     bin_step = 3
     num_bins = round(180 / bin_step)
     from model_design.hopenet_mbv2 import HopenetMBV2
+
     model = HopenetMBV2(num_bins=num_bins)
 
     save_dir = '/data/output/head_pose_estimate_hopenet_mbv2_biwi_v3'
@@ -73,12 +70,13 @@ if __name__ == '__main__':
     # optimizer.add_param_group({'params': pg1, 'weight_decay': 5e-4})  # add pg1 with weight_decay
     # optimizer.add_param_group({'params': pg2})  # add pg2 (biases)
     # del pg0, pg1, pg2
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=2e-4, weight_decay=5e-4)
 
-    from datasets.biwi_dataset_v2 import BIWIData
-    dataset = BIWIData(aug_mode='pipeline_v1', bbox_shrink=0.1, bin_step=bin_step)
+    from dataset.biwi_dataset_v2 import BIWIData
+
+    dataset = BIWIData(aug_mode='pipeline_v1', bbox_shrink=0.0, bin_step=bin_step)
     train_loader = torch.utils.data.DataLoader(dataset=dataset,
-                                               batch_size=64*n_cuda_device,
+                                               batch_size=256 * n_cuda_device,
                                                shuffle=True,
                                                num_workers=4*n_cuda_device)
     num_epochs = 10000
@@ -153,23 +151,24 @@ if __name__ == '__main__':
             m_roll_err.update(torch.mean(torch.abs(roll_predicted - label_roll)).item(), bs)
 
             if (step) % 10 == 0:
-                print('epoch[{}][{}/{}] lr:{}, total_loss:{:.3f}, yaw_loss:{:.3f}, pitch_loss:{:.3f}, roll_loss:{:.3f}, '
-                      'yaw_err:{:.3f}, pitch_err:{:.3f}, roll_err:{:.3f}'
-                      .format(epoch + 1,
-                              i + 1,
-                              len(train_loader),
-                              lr,
-                              m_yaw_loss.avg + m_pitch_loss.avg + m_roll_loss.avg,
-                              m_yaw_loss.avg,
-                              m_pitch_loss.avg,
-                              m_roll_loss.avg,
-                              m_yaw_err.avg,
-                              m_pitch_err.avg,
-                              m_roll_err.avg,
-                              ))
+                print(
+                    'epoch[{}][{}/{}] lr:{}, total_loss:{:.3f}, yaw_loss:{:.3f}, pitch_loss:{:.3f}, roll_loss:{:.3f}, '
+                    'yaw_err:{:.3f}, pitch_err:{:.3f}, roll_err:{:.3f}'
+                    .format(epoch + 1,
+                            i + 1,
+                            len(train_loader),
+                            lr,
+                            m_yaw_loss.avg + m_pitch_loss.avg + m_roll_loss.avg,
+                            m_yaw_loss.avg,
+                            m_pitch_loss.avg,
+                            m_roll_loss.avg,
+                            m_yaw_err.avg,
+                            m_pitch_err.avg,
+                            m_roll_err.avg,
+                            ))
                 m_yaw_loss.reset()
                 m_pitch_loss.reset()
                 m_roll_loss.reset()
 
-            if epoch >= 0 and (step) % 200 == 0:
+            if epoch >= 0 and (step) % 100 == 0:
                 checkpoint_op.save_checkpoint(model=model.module if n_cuda_device > 1 else model)

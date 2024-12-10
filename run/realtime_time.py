@@ -1,4 +1,6 @@
 import cv2
+import sys
+sys.path.append('..')
 from face_detect_mbv2_api.detect_inference import FaceDetAPI
 from deploy.head_pose_est_api import HeadPoseEstAPI
 from utils import visual
@@ -6,7 +8,7 @@ from utils import visual
 def realtime_test():
 
     face_det_api = FaceDetAPI()
-    hpe_api = HeadPoseEstAPI()
+    hpe_api = HeadPoseEstAPI(model_path='../deploy/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx')
 
     ######################## load camera ######################
     clicked = False
@@ -43,10 +45,10 @@ def realtime_test():
 
             # draw face bbox
             b = list(map(int, face_bbox))
-            if yaw >= -15 and yaw <= 25 and pitch >= -32 and pitch <= 22 and roll >= -23 and roll <= 23:
-                cv2.rectangle(img_cv2, (b[0], b[1]), (b[2], b[3]), (0, 255, 0), thickness=1)
+            if yaw >= -22 and yaw <= 22 and pitch >= -27 and pitch <= 22 and roll >= -23 and roll <= 23:
+                cv2.rectangle(img_cv2, (b[0], b[1]), (b[2], b[3]), (0, 255, 0), thickness=2)
             else:
-                cv2.rectangle(img_cv2, (b[0], b[1]), (b[2], b[3]), (0, 0, 255), thickness=2)
+                cv2.rectangle(img_cv2, (b[0], b[1]), (b[2], b[3]), (0, 0, 255), thickness=4)
 
         frame = img_cv2
 

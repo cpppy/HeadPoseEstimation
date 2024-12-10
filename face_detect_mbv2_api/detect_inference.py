@@ -13,7 +13,7 @@ from face_detect_mbv2_api.anchor_generator_np import AnchorGenerator
 class FaceDetAPI(object):
 
     def __init__(self,
-                 onnx_fpath='/data/HeadPoseEstimation/face_detect_mbv2_api/retinaface_mbv2_s840_fixfpn_relu_no_postproc_20210630.onnx',
+                 onnx_fpath='../weights/retinaface_mbv2_s840_fixfpn_relu_no_postproc_20210630.onnx',
                  draw_save_dir='./results'):
         super(FaceDetAPI, self).__init__()
         self.model = self._load_model(onnx_fpath)
@@ -23,11 +23,11 @@ class FaceDetAPI(object):
 
     def _load_model(self, model_path):
         logging.info('load_face_det_model:{}'.format(model_path))
-        opts = onnxruntime.SessionOptions()
-        opts.intra_op_num_threads = 2
-        opts.inter_op_num_threads = 2
-        opts.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
-        model = onnxruntime.InferenceSession(model_path, sess_options=opts)
+        if onnxruntime.get_device() == 'GPU':
+            print('use cuda to load onnx_model')
+            model = onnxruntime.InferenceSession(model_path, None, providers=["CUDAExecutionProvider"])
+        else:
+            model = onnxruntime.InferenceSession(model_path, None, providers=["CPUExecutionProvider"])
         return model
 
 
@@ -37,8 +37,11 @@ class FaceDetAPI(object):
         # testing scale
         # target_size = 840
         # max_size = 1280
-        target_size = 240
-        max_size = 480
+        target_size = 480
+        max_size = 960
+        # target_size = 240
+        # max_size = 480
+
         im_shape = img.shape
         im_size_min = np.min(im_shape[0:2])
         im_size_max = np.max(im_shape[0:2])
@@ -201,7 +204,7 @@ class FaceDetAPI(object):
             bboxes_xywh.append([x, y, w, h])
             bboxes_xyxy.append([int(val) for val in box])
             bboxes_scores.append(round(float(det[4]), 5))
-            land = (land / resize).astype(np.int)
+            land = (land / resize).astype(np.int32)
             bboxes_landmarks.append(land.tolist())
         dets = np.concatenate([dets[:, 0:4] / resize, dets[:, 4:5], dets[:, 5:] / resize], axis=1)
 
@@ -246,5 +249,5 @@ if __name__ == '__main__':
 
     det_api = FaceDetAPI()
     img_cv2 = cv2.imread('/data/data/BIWI/hpdb/12/frame_00567_rgb.png')
-    det_api(img_cv2)
-
+    result = det_api(img_cv2)
+    print(result)

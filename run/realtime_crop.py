@@ -6,7 +6,7 @@ import time
 
 def realtime_test():
 
-    face_det_api = FaceDetAPI()
+    face_det_api = FaceDetAPI(onnx_fpath='../face_detect_mbv2_api/retinaface_mbv2_s840_fixfpn_relu_no_postproc_20210630.onnx',)
     # hpe_api = HeadPoseEstAPI()
 
     ######################## load camera ######################

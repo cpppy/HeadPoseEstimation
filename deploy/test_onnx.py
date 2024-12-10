@@ -1,4 +1,4 @@
-import onnx
+# import onnx
 import onnxruntime
 import cv2
 import numpy as np
@@ -14,7 +14,8 @@ def onnx_inference():
     opts.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
     model = onnxruntime.InferenceSession(model_path, sess_options=opts)
 
-    img_cv2 = cv2.imread('../datasets/test.png', cv2.IMREAD_COLOR)
+    img_cv2 = cv2.imread('../dataset/test3.png', cv2.IMREAD_COLOR)
+    # img_cv2 = cv2.imread('/data/FaceRecog/deploy/0.jpg')
     print('org_img:', img_cv2.shape)
     img_cv2 = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2RGB)
     img_cv2 = cv2.resize(img_cv2, (224, 224))
@@ -39,7 +40,7 @@ def onnx_inference():
     from utils import visual
     # draw_img = visual.plot_pose_cube(img_cv2.copy(), yaw, pitch, roll)
     draw_img = visual.draw_axis(img_cv2.copy(), yaw, pitch, roll)
-    cv2.imwrite('result3.jpg', draw_img)
+    cv2.imwrite('result3_crop.jpg', draw_img)
 
 
 
