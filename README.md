@@ -8,7 +8,7 @@
 
 ![Alt text](./assets/head_pose_definition.png "head pose metrics")
 
-<div style="text - align: center;"><img src="./assets/result3.jpg" width="400"></div>
+<img src="./assets/result3.jpg" width="400">
 
 
 **数据集**
