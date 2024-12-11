@@ -1,9 +1,9 @@
 # HeadPoseEstimation
 
 ### 项目介绍
-    头部姿态估计
-    为了在端侧芯片部署制作的一个轻量化版本（基于mobilenetv2，不仅头部姿态估计，人脸检测也基于mobilenetv2做了轻量化改造)，均提供了onnx文件。
-    如果为了得到效果更好的版本，可以修改网络以及使用更多的数据（当前版本仅使用了biwi这一个数据集）。
+头部姿态估计
+为了在端侧芯片部署制作的一个轻量化版本（基于mobilenetv2，不仅头部姿态估计，人脸检测也基于mobilenetv2做了轻量化改造)，均提供了onnx文件。
+如果为了得到效果更好的版本，可以修改网络以及使用更多的数据（当前版本仅使用了biwi这一个数据集）。
 
 ![Alt text](./assets/head_pose_definition.png "head pose metrics")
 
@@ -14,14 +14,14 @@ BIWI
 ##### 模型
 HopeNet
 
-####权重文件
+**权重文件**    
 头部姿态估计
 >./weights/retinaface_mbv2_s840_fixfpn_relu_no_postproc_20210630.onnx
 
-人脸检测
+**人脸检测**
 >./weights/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx
 
-### 推理方式
+### 推理方式    
 ```
 from deploy.head_pose_est_api import HeadPoseEstAPI
 
@@ -32,12 +32,12 @@ result = hpe_api(face_img)
 如果希望使用本地摄像头处理视频流，也可以使用run/realtime_est.py的代码。
 
 
-### 训练代码
+### 训练代码    
 1. 在代码中配置好biwi_dataset的文件路径
 2. cd run & python3 train_mbv2_v3.py
 
 
-#####关于数据增强可以在如下代码中调节         
+**关于数据增强可以在如下代码中调节**         
 增强方法包含：随机翻转、裁剪or扩展、旋转、畸变、色彩、亮度、模糊、Mixup、锐化等。git
 ```
 class Pipeline(object):
