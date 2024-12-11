@@ -7,7 +7,7 @@
 
 ![Alt text](./assets/head_pose_definition.png "head pose metrics")
 
-![Alt text](./assets/result3.jpg "test smaple")
+![Alt text](./assets/result3.jpg "test smaple" ) <!-- .element height="30%" width="30%" -->
 
 ##### 数据集
 BIWI
@@ -22,19 +22,22 @@ HopeNet
 >./weights/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx
 
 ### 推理方式
->from deploy.head_pose_est_api import HeadPoseEstAPI
-> 
->hpe_api = HeadPoseEstAPI(model_path='./weights/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx')
->result = hpe_api(face_img)
+```
+from deploy.head_pose_est_api import HeadPoseEstAPI
 
+hpe_api = HeadPoseEstAPI(model_path='./weights/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx')
+result = hpe_api(face_img)
+```
 具体可以参照 deploy/head_pose_est_api.py中的实现。
+如果希望使用本地摄像头处理视频流，也可以使用run/realtime_est.py的代码。
 
 
 ### 训练代码
 1. 在代码中配置好biwi_dataset的文件路径
 2. cd run & python3 train_mbv2_v3.py
 
-#####关于数据增强可以在如下代码中调节
+
+#####关于数据增强可以在如下代码中调节         
 增强方法包含：随机翻转、裁剪or扩展、旋转、畸变、色彩、亮度、模糊、Mixup、锐化等。git
 ```
 class Pipeline(object):
@@ -55,6 +58,7 @@ class Pipeline(object):
         self.sharpen_func = Sharpness()
 ```
 
+
 ###优化点
 当前没有项目涉及到这部分，所以不再进行更新，仅列举几点可以做的优化，有兴趣或者有需要的可以自行尝试。
 1. more data for training
@@ -62,7 +66,6 @@ class Pipeline(object):
 3. EMA
 4. Optuna for DataAugmentation policy
 5. loss function    
-......
 
 
 
