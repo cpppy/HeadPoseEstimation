@@ -7,8 +7,7 @@
 
 ![Alt text](./assets/head_pose_definition.png "head pose metrics")
 
-![Alt text](./assets/result3.jpg "test smaple" )<!-- .element height="30%" width="30%" -->
-<img src="./assets/result3.jpg" width="300" height="200">
+<img src="./assets/result3.jpg" width="400">
 
 **数据集**
 BIWI
