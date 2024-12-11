@@ -29,7 +29,7 @@ hpe_api = HeadPoseEstAPI(model_path='./weights/head_pose_estimation_hopenet_biwi
 result = hpe_api(face_img)
 ```
 具体可以参照 deploy/head_pose_est_api.py中的实现。
-如果希望使用本地摄像头处理视频流，也可以使用run/realtime_est.py的代码。
+如果希望使用本地摄像头处理视频流，也可以使用run/realtime_time.py的代码。
 
 
 ### 训练代码    
@@ -38,7 +38,7 @@ result = hpe_api(face_img)
 
 
 **关于数据增强可以在如下代码中调节**         
-增强方法包含：随机翻转、裁剪or扩展、旋转、畸变、色彩、亮度、模糊、Mixup、锐化等。git
+增强方法包含：随机翻转、裁剪or扩展、旋转、畸变、色彩、亮度、模糊、Mixup、锐化等。
 ```
 class Pipeline(object):
     def __init__(self):
