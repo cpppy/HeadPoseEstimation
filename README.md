@@ -11,20 +11,20 @@
 <img src="./assets/result3.jpg" width="400">
 
 
-**数据集**
+**数据集**    
 BIWI
 
 
-**模型**
+**模型**    
 HopeNet
 
 **权重文件**    
-头部姿态估计
+头部姿态估计    
 >./weights/retinaface_mbv2_s840_fixfpn_relu_no_postproc_20210630.onnx
 
-**人脸检测**
+人脸检测    
 >./weights/head_pose_estimation_hopenet_biwi_mbv2_20211223.onnx
-
+    
 ### 推理方式    
 ```
 from deploy.head_pose_est_api import HeadPoseEstAPI
