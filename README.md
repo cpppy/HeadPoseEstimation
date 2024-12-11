@@ -7,11 +7,11 @@
 
 ![Alt text](./assets/head_pose_definition.png "head pose metrics")
 
-![Alt text](./assets/result3.jpg "test smaple" ) <!-- .element height="30%" width="30%" -->
+![Alt text](./assets/result3.jpg "test smaple" )<!-- .element height="30%" width="30%" -->
 
-##### 数据集
+**数据集**
 BIWI
-##### 模型
+**模型**
 HopeNet
 
 **权重文件**    
@@ -59,15 +59,13 @@ class Pipeline(object):
 ```
 
 
-###优化点
+### 优化点
 当前没有项目涉及到这部分，所以不再进行更新，仅列举几点可以做的优化，有兴趣或者有需要的可以自行尝试。
 1. more data for training
 2. gradient accumulate
 3. EMA
 4. Optuna for DataAugmentation policy
 5. loss function    
-
-
 
 
 
