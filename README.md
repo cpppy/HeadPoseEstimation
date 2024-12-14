@@ -63,7 +63,7 @@ class Pipeline(object):
 ```
 
 
-### 待更新
+### 待优化点
 1. more data for training
 2. gradient accumulate
 3. EMA
