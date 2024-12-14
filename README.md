@@ -63,8 +63,7 @@ class Pipeline(object):
 ```
 
 
-### 优化点
-当前没有项目涉及到这部分，所以不再进行更新，仅列举几点可以做的优化，有兴趣可以自行尝试。
+### 待更新
 1. more data for training
 2. gradient accumulate
 3. EMA
